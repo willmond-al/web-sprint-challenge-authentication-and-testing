@@ -17,7 +17,9 @@ async function add(user) {
 }
 
 function findBy(filter) {
-    return db("users").where(filter).orderBy("id");
+    return db("users as u")
+    .select("u.id", "u.username", "u.password")
+    .where(filter).orderBy("id");
 }
 
 function findById(id){
