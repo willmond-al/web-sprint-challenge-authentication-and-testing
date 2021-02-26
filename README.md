@@ -35,6 +35,7 @@ For a step-by-step on setting up Codegrade see [this guide.](https://www.notion.
 ### Task 2: Project Requirements
 
 
+
 Your finished project must include all of the following requirements (further instructions are found inside each file):
 
 - [ ] An authentication workflow with functionality for account creation and login, implemented inside `api/auth/auth-router.js`.
