@@ -1,7 +1,31 @@
 const router = require('express').Router();
+const jwt = require("jsonwebtoken")
+const bcryptjs = require("bcryptjs")
+const Users = require('../users/users-model')
 
-router.post('/register', (req, res) => {
-  res.end('implement register, please!');
+const checkPayload = (req, res, next) => {
+  if(!req.body.username || !req.body.password){
+      res.status(401).json("username and password required")
+  } else {
+    next()
+  }
+}
+
+const checkUserInDb = async (req, res, next)=>{
+  try{
+    const rows = await Users.findBy({username: req.body.username})
+    if(!rows.length){
+      next()
+    }else{
+      res.status(401).json("username taken")
+    }
+  }catch(e){
+    res.status(500).json(`server error: ${e}`)
+  }
+}
+
+router.post('/register', checkPayload, checkUserInDb, async (req, res) => {
+  // res.end('implement register, please!');
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -26,6 +50,16 @@ router.post('/register', (req, res) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
+    
+  try{
+    const hash = bcryptjs.hashSync(req.body.password, 10)
+    const newUser = await Users.add({username:req.body.username, password:hash})
+    res.status(201).json(newUser)
+  }catch(e){
+    res.status(500).json({message: e.message})
+  }
+ 
+
 });
 
 router.post('/login', (req, res) => {
